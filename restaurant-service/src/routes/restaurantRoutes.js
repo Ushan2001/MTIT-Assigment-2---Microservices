@@ -14,6 +14,18 @@ const controller = require('../controllers/restaurantController');
  *   post:
  *     summary: Create a restaurant
  *     tags: [Restaurants]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name, address, cuisine]
+ *             properties:
+ *               name: { type: string }
+ *               address: { type: string }
+ *               cuisine: { type: string }
+ *               rating: { type: number }
  *     responses:
  *       201:
  *         description: Created
@@ -31,12 +43,33 @@ router.post('/api/restaurants', controller.create);
  *       - in: path
  *         name: id
  *         required: true
+ *         schema: { type: string }
  *   put:
  *     summary: Update restaurant by ID
  *     tags: [Restaurants]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name: { type: string }
+ *               address: { type: string }
+ *               cuisine: { type: string }
+ *               rating: { type: number }
  *   delete:
  *     summary: Delete restaurant by ID
  *     tags: [Restaurants]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
  */
 router.get('/api/restaurants/:id', controller.getById);
 router.put('/api/restaurants/:id', controller.update);
@@ -52,9 +85,27 @@ router.delete('/api/restaurants/:id', controller.remove);
  *       - in: path
  *         name: id
  *         required: true
+ *         schema: { type: string }
  *   post:
- *     summary: Add menu item
+ *     summary: Add a menu item
  *     tags: [Restaurants]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [itemName, price]
+ *             properties:
+ *               itemName: { type: string }
+ *               price: { type: number }
+ *               description: { type: string }
+ *               available: { type: boolean }
  */
 router.get('/api/restaurants/:id/menu', controller.getMenu);
 router.post('/api/restaurants/:id/menu', controller.addMenuItem);

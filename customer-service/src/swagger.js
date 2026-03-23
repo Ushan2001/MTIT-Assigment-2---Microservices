@@ -8,7 +8,17 @@ const options = {
       version: '1.0.0',
       description: 'API documentation'
     },
-    servers: [{ url: 'http://localhost:3003' }]
+    servers: [{ url: 'http://localhost:3003' }],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      }
+    },
+    security: [{ bearerAuth: [] }]
   },
   apis: ['./src/routes/*.js']
 };
