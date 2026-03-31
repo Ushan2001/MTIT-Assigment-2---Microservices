@@ -3,6 +3,15 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const axios = require('axios');
 
+exports.getAllCustomers = async (req, res) => {
+    try {
+        const customers = await Customer.find().select('-passwordHash');
+        res.json(customers);
+    } catch (err) {
+        res.status(500).json({ err: err.message });
+    }
+};
+
 exports.register = async (req, res) => {
     try {
         const { name, email, password, phone, address } = req.body;
@@ -56,7 +65,7 @@ exports.updateProfile = async (req, res) => {
         delete req.body.password;
         const customer = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true }).select('-passwordHash');
         if (!customer) return res.status(404).json({ err: 'Customer not found' });
-        res.json(customer);
+        res.json({ msg: 'Profile updated successfully', customer });
     } catch (err) {
         res.status(500).json({ err: err.message });
     }
@@ -66,7 +75,7 @@ exports.removeAccount = async (req, res) => {
     try {
         const customer = await Customer.findByIdAndDelete(req.params.id);
         if (!customer) return res.status(404).json({ err: 'Customer not found' });
-        res.json({ msg: 'Account deleted' });
+        res.json({ msg: 'Account deleted successfully' });
     } catch (err) {
         res.status(500).json({ err: err.message });
     }
