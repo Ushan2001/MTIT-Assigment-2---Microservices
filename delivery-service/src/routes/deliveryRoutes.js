@@ -69,7 +69,7 @@ router.put('/api/deliveries/:id/status', controller.updateStatus);
 
 /**
  * @swagger
- * /api/drivers:
+ * /api/deliveries/drivers:
  *   get:
  *     summary: List all drivers
  *     tags: [Drivers]
@@ -86,12 +86,12 @@ router.put('/api/deliveries/:id/status', controller.updateStatus);
  *             properties:
  *               name: { type: string }
  */
-router.get('/api/drivers', controller.getAllDrivers);
-router.post('/api/drivers', controller.createDriver);
+router.get('/api/deliveries/drivers', controller.getAllDrivers);
+router.post('/api/deliveries/drivers', controller.createDriver);
 
 /**
  * @swagger
- * /api/drivers/{id}:
+ * /api/deliveries/drivers/{id}:
  *   put:
  *     summary: Update driver availability
  *     tags: [Drivers]
@@ -110,11 +110,11 @@ router.post('/api/drivers', controller.createDriver);
  *               available: { type: boolean }
  *               name: { type: string }
  */
-router.put('/api/drivers/:id', controller.updateDriver);
+router.put('/api/deliveries/drivers/:id', controller.updateDriver);
 
 /**
  * @swagger
- * /api/drivers/{id}:
+ * /api/deliveries/drivers/{id}:
  *   delete:
  *     summary: Delete a driver
  *     tags: [Drivers]
@@ -129,6 +129,6 @@ router.put('/api/drivers/:id', controller.updateDriver);
  *       404:
  *         description: Driver not found
  */
-router.delete('/api/drivers/:id', controller.deleteDriver);
+router.delete('/api/deliveries/drivers/:id', controller.deleteDriver);
 
 module.exports = router;
