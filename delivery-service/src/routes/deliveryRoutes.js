@@ -112,4 +112,23 @@ router.post('/api/drivers', controller.createDriver);
  */
 router.put('/api/drivers/:id', controller.updateDriver);
 
+/**
+ * @swagger
+ * /api/drivers/{id}:
+ *   delete:
+ *     summary: Delete a driver
+ *     tags: [Drivers]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: Driver deleted successfully
+ *       404:
+ *         description: Driver not found
+ */
+router.delete('/api/drivers/:id', controller.deleteDriver);
+
 module.exports = router;

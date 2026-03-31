@@ -84,3 +84,14 @@ exports.updateDriver = async (req, res) => {
         res.status(500).json({ err: err.message });
     }
 };
+
+exports.deleteDriver = async (req, res) => {
+    try {
+        const index = drivers.findIndex(d => d.id === req.params.id);
+        if (index === -1) return res.status(404).json({ err: 'Driver not found' });
+        const [deletedDriver] = drivers.splice(index, 1);
+        res.json({ message: 'Driver deleted successfully', driver: deletedDriver });
+    } catch (err) {
+        res.status(500).json({ err: err.message });
+    }
+};
