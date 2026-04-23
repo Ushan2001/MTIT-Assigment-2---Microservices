@@ -93,7 +93,7 @@ router.put('/api/orders/:id/status', controller.updateStatus);
 
 /**
  * @swagger
- * /api/cart:
+ * /api/orders/cart:
  *   post:
  *     summary: Add item to cart
  *     tags: [Cart]
@@ -110,11 +110,11 @@ router.put('/api/orders/:id/status', controller.updateStatus);
  *               qty: { type: integer }
  *               price: { type: number }
  */
-router.post('/api/cart', controller.addToCart);
+router.post('/api/orders/cart', controller.addToCart);
 
 /**
  * @swagger
- * /api/cart/{customerId}:
+ * /api/orders/cart/{customerId}:
  *   get:
  *     summary: Get cart for a customer
  *     tags: [Cart]
@@ -124,6 +124,6 @@ router.post('/api/cart', controller.addToCart);
  *         required: true
  *         schema: { type: string }
  */
-router.get('/api/cart/:customerId', controller.getCart);
+router.get('/api/orders/cart/:customerId', controller.getCart);
 
 module.exports = router;

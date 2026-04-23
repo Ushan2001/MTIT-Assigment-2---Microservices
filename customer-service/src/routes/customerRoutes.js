@@ -56,17 +56,16 @@ router.post('/api/customers/login', controller.login);
 
 /**
  * @swagger
- * /api/customers/{id}:
+ * /api/customers:
  *   get:
- *     summary: Get customer profile
+ *     summary: Get all customers
  *     tags: [Customers]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: List of all customers
+ * /api/customers/{id}:
  *   put:
  *     summary: Update customer profile
  *     tags: [Customers]
@@ -83,9 +82,10 @@ router.post('/api/customers/login', controller.login);
  *           schema:
  *             type: object
  *             properties:
- *               name: { type: string }
- *               phone: { type: string }
  *               address: { type: string }
+ *     responses:
+ *       200:
+ *         description: Profile updated
  *   delete:
  *     summary: Delete customer account
  *     tags: [Customers]
@@ -96,7 +96,11 @@ router.post('/api/customers/login', controller.login);
  *         name: id
  *         required: true
  *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: Account deleted successfully
  */
+router.get('/api/customers', authenticate, controller.getAllCustomers);
 router.get('/api/customers/:id', authenticate, controller.getProfile);
 router.put('/api/customers/:id', authenticate, controller.updateProfile);
 router.delete('/api/customers/:id', authenticate, controller.removeAccount);
