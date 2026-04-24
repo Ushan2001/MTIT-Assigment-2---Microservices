@@ -19,29 +19,93 @@ exports.getDelById = async (req, res) => {
     }
 };
 
+// exports.createDel = async (req, res) => {
+//     try {
+//         const { orderId, driverId, pickupLocation, dropLocation, estimatedTime } = req.body;
+//         if (!orderId || !pickupLocation || !dropLocation) {
+//             return res.status(400).json({ err: 'orderId, pickupLocation and dropLocation are required' });
+//         }
+//         const delivery = await Delivery.create({ orderId, driverId, pickupLocation, dropLocation, estimatedTime });
+//         res.status(201).json(delivery);
+//     } catch (err) {
+//         res.status(500).json({ err: err.message });
+//     }
+// };
+
 exports.createDel = async (req, res) => {
     try {
         const { orderId, driverId, pickupLocation, dropLocation, estimatedTime } = req.body;
-        if (!orderId || !pickupLocation || !dropLocation) {
-            return res.status(400).json({ err: 'orderId, pickupLocation and dropLocation are required' });
+
+        // 🔥 Required + empty validation
+        if (!orderId || orderId.trim() === '') {
+            return res.status(400).json({ err: 'orderId cannot be empty' });
         }
-        const delivery = await Delivery.create({ orderId, driverId, pickupLocation, dropLocation, estimatedTime });
+
+        if (!pickupLocation || pickupLocation.trim() === '') {
+            return res.status(400).json({ err: 'pickupLocation cannot be empty' });
+        }
+
+        if (!dropLocation || dropLocation.trim() === '') {
+            return res.status(400).json({ err: 'dropLocation cannot be empty' });
+        }
+
+        if (driverId && driverId.trim() === '') {
+            return res.status(400).json({ err: 'driverId cannot be empty if provided' });
+        }
+
+        if (estimatedTime && estimatedTime.trim() === '') {
+            return res.status(400).json({ err: 'estimatedTime cannot be empty if provided' });
+        }
+
+        const delivery = await Delivery.create({
+            orderId,
+            driverId,
+            pickupLocation,
+            dropLocation,
+            estimatedTime
+        });
+
         res.status(201).json(delivery);
+
     } catch (err) {
         res.status(500).json({ err: err.message });
     }
 };
 
+// exports.updateStatus = async (req, res) => {
+//     try {
+//         const validStatuses = ['ASSIGNED', 'PICKED_UP', 'IN_TRANSIT', 'DELIVERED', 'FAILED'];
+//         const { status } = req.body;
+//         if (!validStatuses.includes(status)) {
+//             return res.status(400).json({ err: `Status must be one of: ${validStatuses.join(', ')}` });
+//         }
+//         const delivery = await Delivery.findByIdAndUpdate(req.params.id, { status }, { new: true });
+//         if (!delivery) return res.status(404).json({ err: 'Delivery not found' });
+//         res.json(delivery);
+//     } catch (err) {
+//         res.status(500).json({ err: err.message });
+//     }
+// };
+
 exports.updateStatus = async (req, res) => {
     try {
         const validStatuses = ['ASSIGNED', 'PICKED_UP', 'IN_TRANSIT', 'DELIVERED', 'FAILED'];
         const { status } = req.body;
+
+        if (!status || status.trim() === '') {
+            return res.status(400).json({ err: 'Status cannot be empty' });
+        }
+
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ err: `Status must be one of: ${validStatuses.join(', ')}` });
         }
+
         const delivery = await Delivery.findByIdAndUpdate(req.params.id, { status }, { new: true });
+
         if (!delivery) return res.status(404).json({ err: 'Delivery not found' });
+
         res.json(delivery);
+
     } catch (err) {
         res.status(500).json({ err: err.message });
     }
@@ -64,7 +128,9 @@ exports.getAllDrivers = async (req, res) => {
 exports.createDriver = async (req, res) => {
     try {
         const { name } = req.body;
-        if (!name) return res.status(400).json({ err: 'name is required' });
+        if (!name || name.trim() === '') {
+            return res.status(400).json({ err: 'Driver name cannot be empty' });
+        }
         const newDriver = { id: `d${Date.now()}`, name, available: true };
         drivers.push(newDriver);
         res.status(201).json(newDriver);
@@ -76,6 +142,12 @@ exports.createDriver = async (req, res) => {
 exports.updateDriver = async (req, res) => {
     try {
         const driver = drivers.find(d => d.id === req.params.id);
+        if (req.body.name && req.body.name.trim() === '') {
+            return res.status(400).json({ err: 'Driver name cannot be empty' });
+        }
+        if (req.body.available !== undefined && typeof req.body.available !== 'boolean') {
+            return res.status(400).json({ err: 'available must be true or false' });
+        }
         if (!driver) return res.status(404).json({ err: 'Driver not found' });
         if (req.body.available !== undefined) driver.available = req.body.available;
         if (req.body.name) driver.name = req.body.name;

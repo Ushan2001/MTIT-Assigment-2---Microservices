@@ -5,19 +5,6 @@ const controller = require('../controllers/orderController');
 /**
  * @swagger
  * /api/orders:
- *   get:
- *     summary: Get all orders (supports ?customerId=&restaurantId= filters)
- *     tags: [Orders]
- *     parameters:
- *       - in: query
- *         name: customerId
- *         schema: { type: string }
- *       - in: query
- *         name: restaurantId
- *         schema: { type: string }
- *     responses:
- *       200:
- *         description: List of orders
  *   post:
  *     summary: Place a new order
  *     tags: [Orders]
@@ -29,16 +16,43 @@ const controller = require('../controllers/orderController');
  *             type: object
  *             required: [customerId, restaurantId, items]
  *             properties:
- *               customerId: { type: string }
- *               restaurantId: { type: string }
+ *               customerId:
+ *                 type: string
+ *                 minLength: 1
+ *               restaurantId:
+ *                 type: string
+ *                 minLength: 1
  *               items:
  *                 type: array
+ *                 minItems: 1
  *                 items:
  *                   type: object
+ *                   required: [menuItemId, qty, price]
  *                   properties:
- *                     menuItemId: { type: string }
- *                     qty: { type: integer }
- *                     price: { type: number }
+ *                     menuItemId:
+ *                       type: string
+ *                       minLength: 1
+ *                     qty:
+ *                       type: integer
+ *                       minimum: 1
+ *                     price:
+ *                       type: number
+ *                       minimum: 0.01
+ *     responses:
+ *       201:
+ *         description: Order created successfully
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 err:
+ *                   type: string
+ *                   example: "Quantity must be greater than 0"
+ *       500:
+ *         description: Server error
  */
 router.get('/api/orders', controller.getAllOrders);
 router.post('/api/orders', controller.createOrder);
@@ -76,7 +90,8 @@ router.delete('/api/orders/:id', controller.removeOrder);
  *       - in: path
  *         name: id
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -88,6 +103,22 @@ router.delete('/api/orders/:id', controller.removeOrder);
  *               status:
  *                 type: string
  *                 enum: [PENDING, CONFIRMED, PREPARING, OUT_FOR_DELIVERY, DELIVERED, CANCELLED]
+ *                 minLength: 1
+ *     responses:
+ *       200:
+ *         description: Status updated successfully
+ *       400:
+ *         description: Invalid status or empty value
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 err:
+ *                   type: string
+ *                   example: "Status must be one of: PENDING, CONFIRMED..."
+ *       404:
+ *         description: Order not found
  */
 router.put('/api/orders/:id/status', controller.updateStatus);
 
@@ -105,10 +136,33 @@ router.put('/api/orders/:id/status', controller.updateStatus);
  *             type: object
  *             required: [customerId, menuItemId, qty, price]
  *             properties:
- *               customerId: { type: string }
- *               menuItemId: { type: string }
- *               qty: { type: integer }
- *               price: { type: number }
+ *               customerId:
+ *                 type: string
+ *                 minLength: 1
+ *               menuItemId:
+ *                 type: string
+ *                 minLength: 1
+ *               qty:
+ *                 type: integer
+ *                 minimum: 1
+ *               price:
+ *                 type: number
+ *                 minimum: 0.01
+ *     responses:
+ *       201:
+ *         description: Item added to cart
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 err:
+ *                   type: string
+ *                   example: "Quantity must be greater than 0"
+ *       500:
+ *         description: Server error
  */
 router.post('/api/orders/cart', controller.addToCart);
 
