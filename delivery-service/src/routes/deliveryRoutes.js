@@ -8,6 +8,11 @@ const controller = require('../controllers/deliveryController');
  *   get:
  *     summary: Get all deliveries
  *     tags: [Deliveries]
+ *     responses:
+ *       200:
+ *         description: List of deliveries
+ *       500:
+ *         description: Server error
  *   post:
  *     summary: Create a new delivery assignment
  *     tags: [Deliveries]
@@ -19,14 +24,120 @@ const controller = require('../controllers/deliveryController');
  *             type: object
  *             required: [orderId, pickupLocation, dropLocation]
  *             properties:
- *               orderId: { type: string }
- *               driverId: { type: string }
- *               pickupLocation: { type: string }
- *               dropLocation: { type: string }
- *               estimatedTime: { type: string }
+ *               orderId:
+ *                 type: string
+ *                 minLength: 1
+ *               driverId:
+ *                 type: string
+ *                 minLength: 1
+ *               pickupLocation:
+ *                 type: string
+ *                 minLength: 1
+ *               dropLocation:
+ *                 type: string
+ *                 minLength: 1
+ *               estimatedTime:
+ *                 type: string
+ *                 minLength: 1
+ *     responses:
+ *       201:
+ *         description: Delivery created successfully
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 err:
+ *                   type: string
+ *                   example: "pickupLocation cannot be empty"
+ *       500:
+ *         description: Server error
  */
 router.get('/api/deliveries', controller.getAllDel);
 router.post('/api/deliveries', controller.createDel);
+
+/**
+ * @swagger
+ * /api/deliveries/drivers:
+ *   get:
+ *     summary: List all drivers
+ *     tags: [Drivers]
+ *     responses:
+ *       200:
+ *         description: List of drivers
+ *   post:
+ *     summary: Register a new driver
+ *     tags: [Drivers]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name]
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 minLength: 1
+ *     responses:
+ *       201:
+ *         description: Driver created
+ *       400:
+ *         description: Validation error
+ */
+router.get('/api/deliveries/drivers', controller.getAllDrivers);
+router.post('/api/deliveries/drivers', controller.createDriver);
+
+/**
+ * @swagger
+ * /api/deliveries/drivers/{id}:
+ *   put:
+ *     summary: Update driver details
+ *     tags: [Drivers]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 minLength: 1
+ *               available:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Driver updated successfully
+ *       400:
+ *         description: Validation error
+ *       404:
+ *         description: Driver not found
+ *   delete:
+ *     summary: Delete a driver
+ *     tags: [Drivers]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Driver deleted successfully
+ *       404:
+ *         description: Driver not found
+ */
+router.put('/api/deliveries/drivers/:id', controller.updateDriver);
+router.delete('/api/deliveries/drivers/:id', controller.deleteDriver);
 
 /**
  * @swagger
@@ -38,7 +149,13 @@ router.post('/api/deliveries', controller.createDel);
  *       - in: path
  *         name: id
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Delivery details
+ *       404:
+ *         description: Delivery not found
  */
 router.get('/api/deliveries/:id', controller.getDelById);
 
@@ -52,7 +169,8 @@ router.get('/api/deliveries/:id', controller.getDelById);
  *       - in: path
  *         name: id
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -64,71 +182,15 @@ router.get('/api/deliveries/:id', controller.getDelById);
  *               status:
  *                 type: string
  *                 enum: [ASSIGNED, PICKED_UP, IN_TRANSIT, DELIVERED, FAILED]
- */
-router.put('/api/deliveries/:id/status', controller.updateStatus);
-
-/**
- * @swagger
- * /api/deliveries/drivers:
- *   get:
- *     summary: List all drivers
- *     tags: [Drivers]
- *   post:
- *     summary: Register a new driver
- *     tags: [Drivers]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [name]
- *             properties:
- *               name: { type: string }
- */
-router.get('/api/deliveries/drivers', controller.getAllDrivers);
-router.post('/api/deliveries/drivers', controller.createDriver);
-
-/**
- * @swagger
- * /api/deliveries/drivers/{id}:
- *   put:
- *     summary: Update driver availability
- *     tags: [Drivers]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema: { type: string }
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               available: { type: boolean }
- *               name: { type: string }
- */
-router.put('/api/deliveries/drivers/:id', controller.updateDriver);
-
-/**
- * @swagger
- * /api/deliveries/drivers/{id}:
- *   delete:
- *     summary: Delete a driver
- *     tags: [Drivers]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema: { type: string }
+ *                 minLength: 1
  *     responses:
  *       200:
- *         description: Driver deleted successfully
+ *         description: Status updated successfully
+ *       400:
+ *         description: Invalid or empty status
  *       404:
- *         description: Driver not found
+ *         description: Delivery not found
  */
-router.delete('/api/deliveries/drivers/:id', controller.deleteDriver);
+router.put('/api/deliveries/:id/status', controller.updateStatus);
 
 module.exports = router;
